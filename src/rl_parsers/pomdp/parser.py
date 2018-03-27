@@ -289,7 +289,7 @@ class POMDP_Parser:
 
     def p_structure_r_as(self, p):
         """ structure_item : R COLON action COLON state nmatrix """
-        a, s0 = p[3], p[5]
+        a, s0, r = p[3], p[5], p[6]
         self.R[a, s0] = r
 
     ###

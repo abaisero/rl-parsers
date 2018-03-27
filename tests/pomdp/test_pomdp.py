@@ -3,7 +3,7 @@ import unittest
 import rl_parsers.pomdp as dotpomdp
 
 
-class Test_Parser(unittest.TestCase):
+class POMDP_Test(unittest.TestCase):
     def parse_file(self, fname):
         with open(fname) as f:
             dotpomdp.parse(f.read())

@@ -212,7 +212,6 @@ class POMDP_Parser:
         a, s0, s1, prob = p[3], p[5], p[7], p[8]
         self.T[a, s0, s1] = prob
 
-
     def p_structure_t_as_uniform(self, p):
         """ structure_item : T COLON action COLON state UNIFORM """
         a, s0 = p[3], p[5]

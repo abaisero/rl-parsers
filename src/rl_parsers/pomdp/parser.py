@@ -219,6 +219,7 @@ class POMDP_Parser:
 
     def p_structure_t_as_reset(self, p):
         """ structure_item : T COLON action COLON state RESET """
+        a, s0 = p[3], p[5]
         self.T[a, s0] = self.start
 
     def p_structure_t_as_dist(self, p):

@@ -10,3 +10,4 @@ class FSC_Test(unittest.TestCase):
 
     def test_parser(self):
         self.parse_file('tests/fsc/tiger.optimal.fsc')
+        self.parse_file('tests/fsc/loadunload.optimal.fsc')

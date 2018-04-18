@@ -1,22 +1,25 @@
+from collections import namedtuple
+
 import ply.lex as lex
 import ply.yacc as yacc
+
+from rl_parsers.fss import tokrules as tokrules
 
 import numpy as np
 
 
-### LEXER
+# LEXER
 
-from rl_parsers.fss import tokrules as tokrules
 lexer = lex.lex(module=tokrules)
 
 
 # FSS
 
-from collections import namedtuple
 FSS = namedtuple('FSS', 'nodes, actions, start, A, N')
 
 
-### PARSER
+# PARSER
+
 
 class FSS_Parser:
     tokens = tokrules.tokens
@@ -36,7 +39,13 @@ class FSS_Parser:
     def p_fsc(self, p):
         """ fsc : preamble start structure
                 | preamble structure """
-        self.fss = FSS(nodes=self.nodes, actions=self.actions, start=self.start, A=self.A, N=self.N)
+        self.fss = FSS(
+            nodes=self.nodes,
+            actions=self.actions,
+            start=self.start,
+            A=self.A,
+            N=self.N,
+        )
 
     ###
 

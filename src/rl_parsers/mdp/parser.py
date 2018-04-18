@@ -1,24 +1,25 @@
+from collections import namedtuple
+
 import ply.lex as lex
 import ply.yacc as yacc
+
+from rl_parsers.mdp import tokrules as tokrules
+from .. import ParserError
 
 import numpy as np
 
 
-### LEXER
+# LEXER
 
-from rl_parsers.mdp import tokrules as tokrules
 lexer = lex.lex(module=tokrules)
 
 
-### MDP
+# MDP
 
-from collections import namedtuple
 MDP = namedtuple('MDP', 'discount, values, states, actions, start, T, R')
 
 
-### PARSER
-
-from .. import ParserError
+# PARSER
 
 
 class MDP_Parser:
@@ -42,7 +43,15 @@ class MDP_Parser:
     def p_mdp(self, p):
         """ mdp : preamble start structure
                 | preamble structure """
-        self.mdp = MDP(discount=self.discount, values=self.values, states=self.states, actions=self.actions, start=self.start, T=self.T, R=self.R)
+        self.mdp = MDP(
+            discount=self.discount,
+            values=self.values,
+            states=self.states,
+            actions=self.actions,
+            start=self.start,
+            T=self.T,
+            R=self.R,
+        )
 
     ###
 
@@ -99,8 +108,10 @@ class MDP_Parser:
     def p_start_dist(self, p):
         """ start : START COLON pmatrix """
         pm = np.array(p[3])
-        if not np.isclose(pm.sum(), 1.):
-            raise ParserError(f'Start distribution is not normalized (sums to {pm.sum()}).')
+        pmsum = pm.sum()
+        if not np.isclose(pmsum, 1.):
+            raise ParserError(
+                f'Start distribution is not normalized (sums to {pmsum}).')
         self.start = pm
 
     def p_start_state(self, p):
@@ -183,7 +194,6 @@ class MDP_Parser:
         a, s0, s1, prob = p[3], p[5], p[7], p[8]
         self.T[a, s0, s1] = prob
 
-
     def p_structure_t_as_uniform(self, p):
         """ structure_item : T COLON action COLON state UNIFORM """
         a, s0 = p[3], p[5]
@@ -191,14 +201,18 @@ class MDP_Parser:
 
     def p_structure_t_as_reset(self, p):
         """ structure_item : T COLON action COLON state RESET """
+        a, s0 = p[3], p[5]
         self.T[a, s0] = self.start
 
     def p_structure_t_as_dist(self, p):
         """ structure_item : T COLON action COLON state pmatrix """
         a, s0, pm = p[3], p[5], p[6]
         pm = np.array(pm)
-        if not np.isclose(pm.sum(), 1.):
-            raise ParserError(f'Transition distribution (action={a}, state={s0}) is not normalized (sums to {pm.sum()}).')
+        pmsum = pm.sum()
+        if not np.isclose(pmsum, 1.):
+            raise ParserError(f'Transition distribution (action={a}, '
+                              f'state={s0}) is not normalized (sums to '
+                              f'{pmsum}).')
         self.T[a, s0] = pm
 
     def p_structure_t_a_uniform(self, p):
@@ -216,7 +230,8 @@ class MDP_Parser:
         a, pm = p[3], p[4]
         pm = np.reshape(pm, (self.nstates, self.nstates))
         if not np.isclose(pm.sum(axis=1), 1.).all():
-            raise ParserError(f'Transition state distribution (action={a}) is not normalized;')
+            raise ParserError(f'Transition state distribution (action={a}) is '
+                              'not normalized;')
         self.T[a] = pm
 
     ###
@@ -272,7 +287,7 @@ class MDP_Parser:
                  | INT """
         prob = p[1]
         if not 0 <= prob <= 1:
-            raise ParserError(f'Probability value out of bounds;  Is ({prob}) instead.')
+            raise ParserError(f'Probability value ({prob}) out of bounds.')
         p[0] = prob
 
 

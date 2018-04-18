@@ -1,24 +1,26 @@
+from collections import namedtuple
+
 import ply.lex as lex
 import ply.yacc as yacc
+
+from rl_parsers.pomdp import tokrules as tokrules
+from .. import ParserError
 
 import numpy as np
 
 
-### LEXER
+# LEXER
 
-from rl_parsers.pomdp import tokrules as tokrules
 lexer = lex.lex(module=tokrules)
 
 
-### POMDP
+# POMDP
 
-from collections import namedtuple
-POMDP = namedtuple('POMDP', 'discount, values, states, actions, observations, start, T, O, R')
+POMDP = namedtuple(
+    'POMDP', 'discount, values, states, actions, observations, start, T, O, R')
 
 
-### PARSER
-
-from .. import ParserError
+# PARSER
 
 
 class POMDP_Parser:
@@ -44,7 +46,17 @@ class POMDP_Parser:
     def p_pomdp(self, p):
         """ pomdp : preamble start structure
                   | preamble structure """
-        self.pomdp = POMDP(discount=self.discount, values=self.values, states=self.states, actions=self.actions, observations=self.observations, start=self.start, T=self.T, O=self.O, R=self.R)
+        self.pomdp = POMDP(
+            discount=self.discount,
+            values=self.values,
+            states=self.states,
+            actions=self.actions,
+            observations=self.observations,
+            start=self.start,
+            T=self.T,
+            O=self.O,
+            R=self.R
+        )
 
     ###
 
@@ -52,7 +64,8 @@ class POMDP_Parser:
         """ preamble : preamble_list """
         self.T = np.zeros((self.nactions, self.nstates, self.nstates))
         self.O = np.zeros((self.nactions, self.nstates, self.nobservations))
-        self.R = np.zeros((self.nactions, self.nstates, self.nstates, self.nobservations))
+        self.R = np.zeros(
+            (self.nactions, self.nstates, self.nstates, self.nobservations))
 
     def p_preamble_list(self, p):
         """ preamble_list : preamble_list preamble_item
@@ -115,7 +128,8 @@ class POMDP_Parser:
         """ start : START COLON pmatrix """
         pm = np.array(p[3])
         if not np.isclose(pm.sum(), 1.):
-            raise ParserError(f'Start distribution is not normalized (sums to {pm.sum()}).')
+            raise ParserError(
+                f'Start distribution is not normalized (sums to {pm.sum()}).')
         self.start = pm
 
     def p_start_state(self, p):
@@ -227,7 +241,9 @@ class POMDP_Parser:
         a, s0, pm = p[3], p[5], p[6]
         pm = np.array(pm)
         if not np.isclose(pm.sum(), 1.):
-            raise ParserError(f'Transition distribution (action={a}, state={s0}) is not normalized (sums to {pm.sum()}).')
+            raise ParserError(f'Transition distribution (action={a}, '
+                              f'state={s0}) is not normalized (sums to '
+                              f'{pm.sum()}).')
         self.T[a, s0] = pm
 
     def p_structure_t_a_uniform(self, p):
@@ -245,7 +261,8 @@ class POMDP_Parser:
         a, pm = p[3], p[4]
         pm = np.reshape(pm, (self.nstates, self.nstates))
         if not np.isclose(pm.sum(axis=1), 1.).all():
-            raise ParserError(f'Transition state distribution (action={a}) is not normalized;')
+            raise ParserError(f'Transition state distribution (action={a}) is '
+                              'not normalized;')
         self.T[a] = pm
 
     ###
@@ -333,7 +350,7 @@ class POMDP_Parser:
                  | INT """
         prob = p[1]
         if not 0 <= prob <= 1:
-            raise ParserError(f'Probability value out of bounds;  Is ({prob}) instead.')
+            raise ParserError(f'Probability value ({prob}) out of bounds.')
         p[0] = prob
 
 

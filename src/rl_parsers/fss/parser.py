@@ -171,12 +171,12 @@ class FSS_Parser:
         n, bm = p[3], p[4]
         self.N[n] = bm
 
-    def p_structure_n_all(self, p):
+    def p_structure_n_n_all(self, p):
         """ structure_item : N COLON node ALL """
         n = p[3]
         self.N[n].fill(True)
 
-    def p_structure_n_none(self, p):
+    def p_structure_n_n_none(self, p):
         """ structure_item : N COLON node NONE """
         n = p[3]
         self.N[n].fill(False)

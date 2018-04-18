@@ -242,7 +242,7 @@ class FSC_Parser:
 
     def p_structure_t_o_identity(self, p):
         """ structure_item : T COLON observation IDENTITY """
-        a = p[3]
+        o = p[3]
         self.T[o] = np.eye(self.nnodes)
 
     def p_structure_t_o_dist(self, p):

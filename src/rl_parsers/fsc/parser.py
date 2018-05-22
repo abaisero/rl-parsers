@@ -172,7 +172,6 @@ class FSC_Parser:
 
     def p_action_id(self, p):
         """ action : ID """
-        print(p[1])
         p[0] = self.actions.index(p[1])
 
     def p_action_all(self, p):

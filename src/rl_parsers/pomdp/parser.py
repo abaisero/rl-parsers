@@ -17,13 +17,15 @@ lexer = lex.lex(module=tokrules)
 # POMDP
 
 POMDP = namedtuple(
-    'POMDP', 'discount, values, states, actions, observations, start, T, O, R')
+    'POMDP',
+    'discount, values, states, actions, observations, start, T, O, R, reset'
+)
 
 
 # PARSER
 
 
-class POMDP_Parser:
+class Parser:
     tokens = tokrules.tokens
 
     def __init__(self):
@@ -38,6 +40,8 @@ class POMDP_Parser:
         self.T = None
         self.O = None
         self.R = None
+
+        self.reset = None
 
     def p_error(self, p):
         # TODO send all printsto stderr or smth like that
@@ -55,7 +59,8 @@ class POMDP_Parser:
             start=self.start,
             T=self.T,
             O=self.O,
-            R=self.R
+            R=self.R,
+            reset=self.reset,
         )
 
     ###
@@ -66,6 +71,7 @@ class POMDP_Parser:
         self.O = np.zeros((self.nactions, self.nstates, self.nobservations))
         self.R = np.zeros(
             (self.nactions, self.nstates, self.nstates, self.nobservations))
+        self.reset = np.zeros((self.nactions, self.nstates), dtype=np.bool)
 
     def p_preamble_list(self, p):
         """ preamble_list : preamble_list preamble_item
@@ -235,6 +241,7 @@ class POMDP_Parser:
         """ structure_item : T COLON action COLON state RESET """
         a, s0 = p[3], p[5]
         self.T[a, s0] = self.start
+        self.reset[a, s0] = True
 
     def p_structure_t_as_dist(self, p):
         """ structure_item : T COLON action COLON state pmatrix """
@@ -355,7 +362,7 @@ class POMDP_Parser:
 
 
 def parse(text, **kwargs):
-    p = POMDP_Parser()
+    p = Parser()
     y = yacc.yacc(module=p)
     y.parse(text, lexer=lexer, **kwargs)
     return p.pomdp

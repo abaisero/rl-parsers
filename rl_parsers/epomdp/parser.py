@@ -18,7 +18,8 @@ lexer = lex.lex(module=tokrules)
 
 POMDP = namedtuple(
     'POMDP',
-    'discount, values, states, actions, observations, start, T, O, R, done')
+    'discount, values, states, actions, observations, start, T, O, R, D'
+)
 
 
 # PARSER
@@ -54,10 +55,10 @@ class POMDP_Parser:
             actions=self.actions,
             observations=self.observations,
             start=self.start,
-            done=self.done,
             T=self.T,
             O=self.O,
-            R=self.R
+            R=self.R,
+            D=self.D,
         )
 
     ###
@@ -68,7 +69,7 @@ class POMDP_Parser:
         self.O = np.zeros((self.nactions, self.nstates, self.nobservations))
         self.R = np.zeros(
             (self.nactions, self.nstates, self.nstates, self.nobservations))
-        self.done = np.zeros((self.nactions, self.nstates), dtype=np.bool)
+        self.D = np.zeros((self.nactions, self.nstates), dtype=np.bool)
 
     def p_preamble_list(self, p):
         """ preamble_list : preamble_list preamble_item
@@ -238,7 +239,7 @@ class POMDP_Parser:
         """ structure_item : T COLON action COLON state RESET """
         a, s0 = p[3], p[5]
         self.T[a, s0] = self.start
-        self.done[a, s0] = True
+        self.D[a, s0] = True
 
     def p_structure_t_as_dist(self, p):
         """ structure_item : T COLON action COLON state pmatrix """

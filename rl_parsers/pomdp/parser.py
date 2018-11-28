@@ -1,10 +1,8 @@
 from collections import namedtuple
 
-import ply.lex as lex
-import ply.yacc as yacc
-
-from rl_parsers.pomdp import tokrules as tokrules
-from .. import ParserError
+from ply import lex, yacc
+from rl_parsers import ParserError
+from . import tokrules
 
 import numpy as np
 

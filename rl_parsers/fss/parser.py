@@ -1,9 +1,7 @@
 from collections import namedtuple
 
-import ply.lex as lex
-import ply.yacc as yacc
-
-from rl_parsers.fss import tokrules as tokrules
+from ply import lex, yacc
+from . import tokrules
 
 import numpy as np
 

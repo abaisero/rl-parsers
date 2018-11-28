@@ -14,7 +14,7 @@ lexer = lex.lex(module=tokrules)
 
 # MDP
 
-MDP = namedtuple('MDP', 'discount, values, states, actions, start, T, R')
+MDP = namedtuple('MDP', 'discount, values, states, actions, start, T, R, reset')
 
 
 # PARSER
@@ -34,6 +34,8 @@ class MDP_Parser:
         self.T = None
         self.R = None
 
+        self.reset = None
+
     def p_error(self, p):
         # TODO send all printsto stderr or smth like that
         print('Parsing Error:', p.lineno, p.lexpos, p.type, p.value)
@@ -49,6 +51,7 @@ class MDP_Parser:
             start=self.start,
             T=self.T,
             R=self.R,
+            reset=self.reset,
         )
 
     ###
@@ -57,6 +60,7 @@ class MDP_Parser:
         """ preamble : preamble_list """
         self.T = np.zeros((self.nactions, self.nstates, self.nstates))
         self.R = np.zeros((self.nactions, self.nstates, self.nstates))
+        self.reset = np.zeros((self.nactions, self.nstates), dtype=np.bool)
 
     def p_preamble_list(self, p):
         """ preamble_list : preamble_list preamble_item
@@ -201,6 +205,7 @@ class MDP_Parser:
         """ structure_item : T COLON action COLON state RESET """
         a, s0 = p[3], p[5]
         self.T[a, s0] = self.start
+        self.reset[a, s0] = True
 
     def p_structure_t_as_dist(self, p):
         """ structure_item : T COLON action COLON state pmatrix """

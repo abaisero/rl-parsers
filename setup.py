@@ -10,6 +10,6 @@ setup(
     author_email='andrea.baisero@gmail.com',
     url='https://github.com/abaisero/rl-parsers',
     packages=['rl_parsers'],
-    install_requires=['ply', 'numpy'],
+    install_requires=['numpy', 'ply'],
     license='MIT',
 )

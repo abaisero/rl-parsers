@@ -1,12 +1,4 @@
-tokens = (
-    'COLON',
-    'ASTERISK',
-    'PLUS',
-    'MINUS',
-    'ID',
-    'INT',
-    'FLOAT',
-)
+tokens = ('COLON', 'ASTERISK', 'PLUS', 'MINUS', 'ID', 'INT', 'FLOAT')
 
 reserved = {
     'discount': 'DISCOUNT',

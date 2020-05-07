@@ -1,10 +1,9 @@
 from collections import namedtuple
 
-from ply import lex, yacc
-from . import tokrules
-
 import numpy as np
+from ply import lex, yacc
 
+from . import tokrules
 
 # LEXER
 

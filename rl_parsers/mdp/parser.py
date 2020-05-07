@@ -1,11 +1,11 @@
 from collections import namedtuple
 
-from ply import lex, yacc
-from rl_parsers import ParserError
-from . import tokrules
-
 import numpy as np
+from ply import lex, yacc
 
+from rl_parsers import ParserError
+
+from . import tokrules
 
 # LEXER
 
@@ -111,9 +111,10 @@ class MDP_Parser:
         """ start : START COLON pmatrix """
         pm = np.array(p[3])
         pmsum = pm.sum()
-        if not np.isclose(pmsum, 1.):
+        if not np.isclose(pmsum, 1.0):
             raise ParserError(
-                f'Start distribution is not normalized (sums to {pmsum}).')
+                f'Start distribution is not normalized (sums to {pmsum}).'
+            )
         self.start = pm
 
     def p_start_state(self, p):
@@ -212,10 +213,10 @@ class MDP_Parser:
         a, s0, pm = p[3], p[5], p[6]
         pm = np.array(pm)
         pmsum = pm.sum()
-        if not np.isclose(pmsum, 1.):
-            raise ParserError(f'Transition distribution (action={a}, '
-                              f'state={s0}) is not normalized (sums to '
-                              f'{pmsum}).')
+        if not np.isclose(pmsum, 1.0):
+            raise ParserError(
+                f'Transition distribution (action={a}, state={s0}) is not normalized (sums to {pmsum}).'
+            )
         self.T[a, s0] = pm
 
     def p_structure_t_a_uniform(self, p):
@@ -232,9 +233,10 @@ class MDP_Parser:
         """ structure_item : T COLON action pmatrix """
         a, pm = p[3], p[4]
         pm = np.reshape(pm, (self.nstates, self.nstates))
-        if not np.isclose(pm.sum(axis=1), 1.).all():
-            raise ParserError(f'Transition state distribution (action={a}) is '
-                              'not normalized;')
+        if not np.isclose(pm.sum(axis=1), 1.0).all():
+            raise ParserError(
+                f'Transition state distribution (action={a}) is not normalized;'
+            )
         self.T[a] = pm
 
     ###

@@ -1,11 +1,11 @@
 from collections import namedtuple
 
-from ply import lex, yacc
-from rl_parsers import ParserError
-from . import tokrules
-
 import numpy as np
+from ply import lex, yacc
 
+from rl_parsers import ParserError
+
+from . import tokrules
 
 # LEXER
 
@@ -39,13 +39,14 @@ class FSC_Parser:
     def p_fsc(self, p):
         """ fsc : preamble start structure
                 | preamble structure """
-        self.fsc = FSC(nodes=self.nodes,
-                       actions=self.actions,
-                       observations=self.observations,
-                       start=self.start,
-                       A=self.A,
-                       T=self.T
-                       )
+        self.fsc = FSC(
+            nodes=self.nodes,
+            actions=self.actions,
+            observations=self.observations,
+            start=self.start,
+            A=self.A,
+            T=self.T,
+        )
 
     ###
 
@@ -105,9 +106,10 @@ class FSC_Parser:
     def p_start_dist(self, p):
         """ start : START COLON pmatrix """
         pm = np.array(p[3])
-        if not np.isclose(pm.sum(), 1.):
-            raise ParserError('Start distribution is not normalized (sums to '
-                              f'{pm.sum()}).')
+        if not np.isclose(pm.sum(), 1.0):
+            raise ParserError(
+                f'Start distribution is not normalized (sums to {pm.sum()}).'
+            )
         self.start = pm
 
     def p_start_node(self, p):
@@ -213,9 +215,10 @@ class FSC_Parser:
         """ structure_item : A COLON node pmatrix """
         n0, pm = p[3], p[4]
         pm = np.array(pm)
-        if not np.isclose(pm.sum(), 1.):
-            raise ParserError(f'Action distribution (node={n0}) is not '
-                              f'normalized (sums to {pm.sum()}).')
+        if not np.isclose(pm.sum(), 1.0):
+            raise ParserError(
+                f'Action distribution (node={n0}) is not normalized (sums to {pm.sum()}).'
+            )
         self.A[n0] = pm
 
     def p_structure_t_ass(self, p):
@@ -237,10 +240,10 @@ class FSC_Parser:
         """ structure_item : T COLON observation COLON node pmatrix """
         o, n0, pm = p[3], p[5], p[6]
         pm = np.array(pm)
-        if not np.isclose(pm.sum(), 1.):
+        if not np.isclose(pm.sum(), 1.0):
             raise ParserError(
-                f'Transition distribution (observation={o}, ode={n0}) is not '
-                f'normalized (sums to {pm.sum()}).')
+                f'Transition distribution (observation={o}, ode={n0}) is not normalized (sums to {pm.sum()}).'
+            )
         self.T[o, n0] = pm
 
     def p_structure_t_o_uniform(self, p):
@@ -257,9 +260,10 @@ class FSC_Parser:
         """ structure_item : T COLON observation pmatrix """
         o, pm = p[3], p[4]
         pm = np.reshape(pm, (self.nnodes, self.nnodes))
-        if not np.isclose(pm.sum(axis=1), 1.).all():
-            raise ParserError(f'Transition node distribution (observation={o})'
-                              ' is not normalized;')
+        if not np.isclose(pm.sum(axis=1), 1.0).all():
+            raise ParserError(
+                f'Transition node distribution (observation={o}) is not normalized;'
+            )
         self.T[o] = pm
 
     ###
@@ -285,7 +289,8 @@ class FSC_Parser:
         prob = p[1]
         if not 0 <= prob <= 1:
             raise ParserError(
-                f'Probability value out of bounds;  Is ({prob}) instead.')
+                f'Probability value out of bounds;  Is ({prob}) instead.'
+            )
         p[0] = prob
 
 

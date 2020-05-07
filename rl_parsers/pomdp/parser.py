@@ -1,11 +1,11 @@
 from collections import namedtuple
 
-from ply import lex, yacc
-from rl_parsers import ParserError
-from . import tokrules
-
 import numpy as np
+from ply import lex, yacc
 
+from rl_parsers import ParserError
+
+from . import tokrules
 
 # LEXER
 
@@ -16,7 +16,18 @@ lexer = lex.lex(module=tokrules)
 
 POMDP = namedtuple(
     'POMDP',
-    'discount, values, states, actions, observations, start, T, O, R, reset'
+    (
+        'discount',
+        'values',
+        'states',
+        'actions',
+        'observations',
+        'start',
+        'T',
+        'O',
+        'R',
+        'reset',
+    ),
 )
 
 
@@ -131,9 +142,10 @@ class Parser:
     def p_start_dist(self, p):
         """ start : START COLON pmatrix """
         pm = np.array(p[3])
-        if not np.isclose(pm.sum(), 1.):
+        if not np.isclose(pm.sum(), 1.0):
             raise ParserError(
-                f'Start distribution is not normalized (sums to {pm.sum()}).')
+                f'Start distribution is not normalized (sums to {pm.sum()}).'
+            )
         self.start = pm
 
     def p_start_state(self, p):
@@ -245,10 +257,10 @@ class Parser:
         """ structure_item : T COLON action COLON state pmatrix """
         a, s0, pm = p[3], p[5], p[6]
         pm = np.array(pm)
-        if not np.isclose(pm.sum(), 1.):
-            raise ParserError(f'Transition distribution (action={a}, '
-                              f'state={s0}) is not normalized (sums to '
-                              f'{pm.sum()}).')
+        if not np.isclose(pm.sum(), 1.0):
+            raise ParserError(
+                f'Transition distribution (action={a}, state={s0}) is not normalized (sums to {pm.sum()}).'
+            )
         self.T[a, s0] = pm
 
     def p_structure_t_a_uniform(self, p):
@@ -265,9 +277,10 @@ class Parser:
         """ structure_item : T COLON action pmatrix """
         a, pm = p[3], p[4]
         pm = np.reshape(pm, (self.nstates, self.nstates))
-        if not np.isclose(pm.sum(axis=1), 1.).all():
-            raise ParserError(f'Transition state distribution (action={a}) is '
-                              'not normalized;')
+        if not np.isclose(pm.sum(axis=1), 1.0).all():
+            raise ParserError(
+                f'Transition state distribution (action={a}) is not normalized;'
+            )
         self.T[a] = pm
 
     ###

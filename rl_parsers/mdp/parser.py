@@ -67,8 +67,8 @@ class MDP_Parser:
                           | preamble_item """
 
     def p_preamble_discount(self, p):
-        """ preamble_item : DISCOUNT COLON FLOAT """
-        self.discount = p[3]
+        """ preamble_item : DISCOUNT COLON number """
+        self.discount = float(p[3])
 
     def p_preamble_values(self, p):
         """ preamble_item : VALUES COLON REWARD

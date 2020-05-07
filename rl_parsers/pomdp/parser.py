@@ -27,6 +27,7 @@ POMDP = namedtuple(
         'O',
         'R',
         'reset',
+        'flags',
     ),
 )
 
@@ -50,7 +51,14 @@ class Parser:
         self.O = None
         self.R = None
 
+        self.flags = None
+
         self.reset = None
+
+    def _extend_O(self):
+        if not self.flags['O_includes_state']:
+            self.flags['O_includes_state'] = True
+            self.O = np.expand_dims(self.O, axis=1).repeat(self.nstates, axis=1)
 
     def p_error(self, p):
         # TODO send all printsto stderr or smth like that
@@ -70,6 +78,7 @@ class Parser:
             O=self.O,
             R=self.R,
             reset=self.reset,
+            flags=self.flags,
         )
 
     ###
@@ -79,8 +88,11 @@ class Parser:
         self.T = np.zeros((self.nactions, self.nstates, self.nstates))
         self.O = np.zeros((self.nactions, self.nstates, self.nobservations))
         self.R = np.zeros(
-            (self.nactions, self.nstates, self.nstates, self.nobservations))
+            (self.nactions, self.nstates, self.nstates, self.nobservations)
+        )
         self.reset = np.zeros((self.nactions, self.nstates), dtype=np.bool)
+
+        self.flags = {'O_includes_state': False}
 
     def p_preamble_list(self, p):
         """ preamble_list : preamble_list preamble_item
@@ -288,27 +300,74 @@ class Parser:
     def p_structure_o_aso(self, p):
         """ structure_item : O COLON action COLON state COLON observation prob """
         a, s1, o, pr = p[3], p[5], p[7], p[8]
-        self.O[a, s1, o] = pr
+        if self.flags['O_includes_state']:
+            self.O[a, :, s1, o] = pr
+        else:
+            self.O[a, s1, o] = pr
 
     def p_structure_o_as_uniform(self, p):
         """ structure_item : O COLON action COLON state UNIFORM """
         a, s1 = p[3], p[5]
-        self.O[a, s1] = 1 / self.nobservations
+        if self.flags['O_includes_state']:
+            self.O[a, :, s1] = 1 / self.nobservations
+        else:
+            self.O[a, s1] = 1 / self.nobservations
 
     def p_structure_o_as_dist(self, p):
         """ structure_item : O COLON action COLON state pmatrix """
         a, s1, pm = p[3], p[5], p[6]
-        self.O[a, s1] = pm
+        if self.flags['O_includes_state']:
+            self.O[a, :, s1] = pm
+        else:
+            self.O[a, s1] = pm
 
     def p_structure_o_a_uniform(self, p):
         """ structure_item : O COLON action UNIFORM """
         a = p[3]
-        self.O[a] = 1 / self.nobservations
+        if self.flags['O_includes_state']:
+            self.O[a, :] = 1 / self.nobservations
+        else:
+            self.O[a] = 1 / self.nobservations
 
     def p_structure_o_a_dist(self, p):
         """ structure_item : O COLON action pmatrix """
         a, pm = p[3], p[4]
-        self.O[a] = np.reshape(pm, (self.nstates, self.nobservations))
+        if self.flags['O_includes_state']:
+            self.O[a, :] = np.reshape(pm, (self.nstates, self.nobservations))
+        else:
+            self.O[a] = np.reshape(pm, (self.nstates, self.nobservations))
+
+    ###
+
+    def p_structure_oo_asso(self, p):
+        """ structure_item : OO COLON action COLON state COLON state COLON observation prob """
+        a, s0, s1, o, pr = p[3], p[5], p[7], p[9], p[10]
+        self._extend_O()
+        self.O[a, s0, s1, o] = pr
+
+    def p_structure_oo_ass_uniform(self, p):
+        """ structure_item : OO COLON action COLON state COLON state UNIFORM """
+        a, s0, s1 = p[3], p[5], p[7]
+        self._extend_O()
+        self.O[a, s0, s1] = 1 / self.nobservations
+
+    def p_structure_oo_ass_dist(self, p):
+        """ structure_item : OO COLON action COLON state COLON state pmatrix """
+        a, s0, s1, pm = p[3], p[5], p[7], p[8]
+        self._extend_O()
+        self.O[a, s0, s1] = pm
+
+    def p_structure_oo_as_uniform(self, p):
+        """ structure_item : OO COLON action COLON state UNIFORM """
+        a, s0 = p[3], p[5]
+        self._extend_O()
+        self.O[a, s0] = 1 / self.nobservations
+
+    def p_structure_oo_as_dist(self, p):
+        """ structure_item : OO COLON action COLON state pmatrix """
+        a, s0, pm = p[3], p[5], p[6]
+        self._extend_O()
+        self.O[a, s0] = np.reshape(pm, (self.nstates, self.nobservations))
 
     ###
 

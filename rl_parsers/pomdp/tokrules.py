@@ -8,6 +8,7 @@ reserved = {
     'observations': 'OBSERVATIONS',
     'T': 'T',
     'O': 'O',
+    'OO': 'OO',
     'R': 'R',
     'uniform': 'UNIFORM',
     'identity': 'IDENTITY',

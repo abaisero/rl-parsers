@@ -12,3 +12,4 @@ class POMDP_Test(unittest.TestCase):
         self.parse_file('tests/pomdp/tiger.pomdp')
         self.parse_file('tests/pomdp/loadunload.pomdp')
         self.parse_file('tests/pomdp/heaven-hell.pomdp')
+        self.parse_file('tests/pomdp/floatreset.pomdp')

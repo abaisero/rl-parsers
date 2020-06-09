@@ -294,8 +294,8 @@ class FSC_Parser:
         p[0] = prob
 
 
-def parse(text, **kwargs):
+def parse(text, *, debug=False, **kwargs):
     p = FSC_Parser()
-    y = yacc.yacc(module=p)
+    y = yacc.yacc(module=p, debug=debug)
     y.parse(text, lexer=lexer, **kwargs)
     return p.fsc

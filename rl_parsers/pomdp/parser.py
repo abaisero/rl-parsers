@@ -431,8 +431,8 @@ class Parser:
         p[0] = prob
 
 
-def parse(text, **kwargs):
+def parse(text, *, debug=False, **kwargs):
     p = Parser()
-    y = yacc.yacc(module=p)
+    y = yacc.yacc(module=p, debug=debug)
     y.parse(text, lexer=lexer, **kwargs)
     return p.pomdp

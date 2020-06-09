@@ -1,2 +1,2 @@
-class ParserError(Exception):
+class SemanticError(RuntimeError):
     pass

@@ -1,10 +1,10 @@
-tokens = (
+tokens = [
     'COLON',
     'ASTERISK',
     'ID',
     'INT',
     'FLOAT',
-)
+]
 
 reserved = {
     'nodes': 'NODES',
@@ -20,7 +20,7 @@ reserved = {
     'reset': 'RESET',
 }
 
-tokens += tuple(reserved.values())
+tokens += list(reserved.values())
 
 t_COLON = r':'
 t_ASTERISK = r'\*'
@@ -51,9 +51,8 @@ def t_NUMBER(t):
         return t
 
 
-def t_COMMENT(t):
+def t_COMMENT(t):  # pylint: disable=unused-argument
     r'\#.*'
-    pass
 
 
 t_ignore = ' \t'

@@ -1,30 +1,31 @@
-# rl_parsers
+# rl-parsers
 
 This repository contains parsers for file formats related to reinforcement
-learning.  In each case, the contents of the parsed file is returned as
-a `namedtuple` containing the fields specified by the respective file format.
+learning.  In each case, the contents of the parsed file is returned as a
+`dataclass` instance containing the fields specified by the respective file
+format.
 
 ## POMDP:  Partially Observable Markov Decision Process
 
-Standard POMDP file format, with the addition of the `reset` keyword, which may
-be used both to indicate the end of an episode in episodic tasks, and the
-reinitialization of the state according to the initial distribution in
-continuiung tasks.
+POMDP file format (see the [POMDP File Format Page][pomdp-format]), extended by
+the addition of a `reset` keyword and an `OO` rule:
+* The `reset` keyword may be used both to indicate either the end of an episode
+  (in episodic tasks), or the reinitialization of the state according to the
+  initial state distribution (in continuing tasks).
+* The `OO` rule is like the `O` rule, except that observation probabilities may
+  depend on the previous state as well as the next state.
 
 ## MDP:  Markov Decision Process
 
-Standard MDP file format, with the addition of the `reset` keyword, which may
-be used both to indicate the end of an episode in episodic tasks, and the
-reinitialization of the state according to the initial distribution in
-continuiung tasks.
+MDP file format (can be seen as a sub-set of the POMDP format), extended by the
+addition of a `reset` keyword:
+* The `reset` keyword may be used both to indicate either the end of an episode
+  (in episodic tasks), or the reinitialization of the state according to the
+  initial state distribution (in continuing tasks).
 
 ## FSC:  Finite State Controller
 
-A finite state controller (FSC) is a graph-based policy used for partially
-observable environments.  This is my own custom file format.
+A FSC is a graph-based policy used for partially observable environments.  This
+is my own custom file format.
 
-## FSS:  Finite State Structure
-
-A finite state structure (FSS) is a format used to constraint either the
-internal-dynamics or the action-selection of a FSC.  This is my own custom file
-format.
+[pomdp-format]: http://pomdp.org/code/pomdp-file-spec.html

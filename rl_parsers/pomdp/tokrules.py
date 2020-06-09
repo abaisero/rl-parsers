@@ -1,4 +1,12 @@
-tokens = ('COLON', 'ASTERISK', 'PLUS', 'MINUS', 'ID', 'INT', 'FLOAT')
+tokens = [
+    'COLON',
+    'ASTERISK',
+    'PLUS',
+    'MINUS',
+    'ID',
+    'INT',
+    'FLOAT',
+]
 
 reserved = {
     'discount': 'DISCOUNT',
@@ -13,14 +21,16 @@ reserved = {
     'uniform': 'UNIFORM',
     'identity': 'IDENTITY',
     'reward': 'REWARD',
+    'rewards': 'REWARDS',
     'cost': 'COST',
+    'costs': 'COSTS',
     'start': 'START',
     'include': 'INCLUDE',
     'exclude': 'EXCLUDE',
     'reset': 'RESET',
 }
 
-tokens += tuple(reserved.values())
+tokens += list(reserved.values())
 
 t_COLON = r':'
 t_ASTERISK = r'\*'
@@ -53,9 +63,8 @@ def t_NUMBER(t):
         return t
 
 
-def t_COMMENT(t):
+def t_COMMENT(t):  # pylint: disable=unused-argument
     r'\#.*'
-    pass
 
 
 t_ignore = ' \t'

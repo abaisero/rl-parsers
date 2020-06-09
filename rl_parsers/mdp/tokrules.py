@@ -1,4 +1,4 @@
-tokens = (
+tokens = [
     'COLON',
     'ASTERISK',
     'PLUS',
@@ -6,7 +6,7 @@ tokens = (
     'ID',
     'INT',
     'FLOAT',
-)
+]
 
 reserved = {
     'discount': 'DISCOUNT',
@@ -25,17 +25,19 @@ reserved = {
     'reset': 'RESET',
 }
 
-tokens += tuple(reserved.values())
+tokens += list(reserved.values())
 
 t_COLON = r':'
 t_ASTERISK = r'\*'
 t_PLUS = r'\+'
 t_MINUS = r'-'
 
+
 def t_ID(t):
     r'[a-zA-Z][a-zA-Z0-9\_\-]*'
     t.type = reserved.get(t.value, 'ID')
     return t
+
 
 def t_NUMBER(t):
     r'[0-9]*\.?[0-9]+((E|e)(\+|-)?[0-9]+)?'
@@ -55,18 +57,20 @@ def t_NUMBER(t):
         t.type = 'FLOAT'
         return t
 
-def t_COMMENT(t):
+
+def t_COMMENT(t):  # pylint: disable=unused-argument
     r'\#.*'
-    pass
+
 
 t_ignore = ' \t'
+
 
 # updates line number
 def t_newline(t):
     r'\n'
     t.lexer.lineno += 1
 
+
 def t_error(t):
     print(f'Illegal character \'{t.value[0]}\'')
     t.lexer.skip(1)
-

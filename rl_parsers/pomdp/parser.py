@@ -112,7 +112,7 @@ class Parser:  # pylint: disable=too-many-public-methods
             )
         )
         self.reset = np.zeros(
-            (self.num_actions, self.num_states), dtype=np.bool
+            (self.num_actions, self.num_states), dtype=bool
         )
 
         self.flags['O_includes_state'] = False

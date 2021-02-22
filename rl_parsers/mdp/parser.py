@@ -80,7 +80,7 @@ class Parser:  # pylint: disable=too-many-public-methods
         self.T = np.zeros((self.num_actions, self.num_states, self.num_states))
         self.R = np.zeros((self.num_actions, self.num_states, self.num_states))
         self.reset = np.zeros(
-            (self.num_actions, self.num_states), dtype=np.bool
+            (self.num_actions, self.num_states), dtype=bool
         )
 
     def p_preamble_list(self, p):

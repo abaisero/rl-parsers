@@ -15,6 +15,13 @@ the addition of a `reset` keyword and an `OO` rule:
 * The `OO` rule is like the `O` rule, except that observation probabilities may
   depend on the previous state as well as the next state.
 
+## DPOMDP:  Decentralized Partially Observable Markov Decision Process
+
+DPOMDP file format, extended by the addition of a `reset` keyword:
+* The `reset` keyword may be used both to indicate either the end of an episode
+  (in episodic tasks), or the reinitialization of the state according to the
+  initial state distribution (in continuing tasks).
+
 ## MDP:  Markov Decision Process
 
 MDP file format (can be seen as a sub-set of the POMDP format), extended by the

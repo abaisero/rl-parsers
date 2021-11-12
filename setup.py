@@ -1,10 +1,8 @@
 from setuptools import setup
 
-from rl_parsers import __version__
-
 setup(
     name='rl_parsers',
-    version=__version__,
+    version='1.0.0',
     description='parsers for RL file formats',
     author='Andrea Baisero',
     author_email='andrea.baisero@gmail.com',

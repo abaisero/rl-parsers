@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 setup(
     name='rl_parsers',
@@ -7,7 +7,7 @@ setup(
     author='Andrea Baisero',
     author_email='andrea.baisero@gmail.com',
     url='https://github.com/abaisero/rl-parsers',
-    packages=['rl_parsers'],
+    packages=find_packages(include=['rl_parsers', 'rl_parsers.*']),
     install_requires=['numpy', 'ply'],
     license='MIT',
 )
